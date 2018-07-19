@@ -630,18 +630,18 @@ class ImageMatrix(np.ndarray):
         :return: list List of numpy.array contours
         """
         gray = cv2.cvtColor(self, cv2.COLOR_BGR2GRAY)
-        cv2.imwrite("gray.jpg", gray)
+        # cv2.imwrite("1gray.jpg", gray)
         blurred = cv2.GaussianBlur(gray, (3, 3), 0)
-        cv2.imwrite("blurred.jpg", blurred)
+        # cv2.imwrite("2blurred.jpg", blurred)
         edged = cv2.Canny(blurred, 70, 200)
-        cv2.imwrite("edged.jpg", edged)
+        # cv2.imwrite("3edged.jpg", edged)
 
         
-        kernel = np.ones((3, 3), np.uint8)
+        kernel = np.ones((5, 5), np.uint8)
         closing = cv2.morphologyEx(edged, cv2.MORPH_CLOSE, kernel)
-        cv2.imwrite("closing.jpg", closing)
+        # cv2.imwrite("4closing.jpg", closing)
         
-        contour_list = cv2.findContours(closing.copy(), cv2.RETR_EXTERNAL,
+        contour_list = cv2.findContours(closing, cv2.RETR_EXTERNAL,
                                         cv2.CHAIN_APPROX_SIMPLE)
 
         return contour_list[0] if imutils.is_cv2() else contour_list[1]
@@ -707,7 +707,10 @@ class ImageMatrix(np.ndarray):
         # extract the ROI and apply the mask
         imageROI = np.array(self)[y:y + h, x:x + w]
         maskROI = mask[y:y + h, x:x + w]
+        # cv2.imwrite("5mask.jpg", mask)
         imageROI = cv2.bitwise_and(imageROI, imageROI, mask=maskROI)
+        # cv2.imwrite("6detached.jpg", cv2.cvtColor(imageROI, cv2.COLOR_BGR2RGB))
+
         return imageROI.view(ImageMatrix)
     
     def rotate_cropping(self, angle):

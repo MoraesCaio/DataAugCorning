@@ -12,9 +12,14 @@ parser.add_argument('-d', '--dimension', type=int, default=224, help='Dimension 
 parser.add_argument('-r', '--raw', action='store_true', help='Does not apply random features to image.')
 parser.add_argument('-n', '--number-samples', type=int, default=1, help='Number of samples generated (default value = 1).')
 parser.add_argument('-s', '--save', nargs='?', const='', help='Saves output image with specified name. If -s is used, but no name is given, output file will be saved as \'prefix_filename.ext\'.')
-parser.add_argument('-o', '--output-folder', nargs='?', default='', const='output/', help='Output folder. If -O is used, but no folder is given, a new folder \'output/\' will be created for storing output file.')
+parser.add_argument('-o', '--output-folder', nargs='?', default='', const='output/', help='Output folder. If -o is used, but no folder is given, a new folder \'output/\' will be created for storing output file.')
 parser.add_argument('-p', '--prefix', nargs='?', default='', const='OUT_', help='Prefix added before every output file.')
 parser.add_argument('-v', '--view', action='store_true', help='Shows resulting image.')
+parser.add_argument('-T', '--top-margin', type=float, default=0.19, help='Top margin (percentual). Crops image from the top.')
+parser.add_argument('-B', '--bottom-margin', type=float, default=0.31, help='Bottom margin (percentual). Crops image from the bottom.')
+parser.add_argument('-L', '--left-margin', type=float, default=0.31, help='Left margin (percentual). Crops image from the left.')
+parser.add_argument('-R', '--right-margin', type=float, default=0.29, help='Right margin (percentual). Crops image from the right.')
+
 
 args, _ = parser.parse_known_args()
 
@@ -35,7 +40,11 @@ if args.folder:
 
             img = ImageMatrix.from_file(folder + filename)
             for i in range(args.number_samples):
-                out = dataAug.generate_sample(img, args.dimension, raw=args.raw)
+                cropped_img = dataAug.crop_margins(img, args.top_margin, args.bottom_margin, args.left_margin, args.right_margin)
+                if args.raw:
+                    out = dataAug.extract_raw_sample(cropped_img, args.dimension)
+                else:
+                    out = dataAug.generate_random_sample(cropped_img, args.dimension)
 
                 # -p
                 output_path = folder + output_folder + args.prefix + str(i) + filename
@@ -59,7 +68,11 @@ else:
     filename = args.filename
     img = ImageMatrix.from_file(filename)
     for i in range(args.number_samples):
-        out = dataAug.generate_sample(img, args.dimension, raw=args.raw)
+        cropped_img = dataAug.crop_margins(img, args.top_margin, args.bottom_margin, args.left_margin, args.right_margin)
+        if args.raw:
+            out = dataAug.extract_raw_sample(cropped_img, args.dimension)
+        else:
+            out = dataAug.generate_random_sample(cropped_img, args.dimension)
 
         # -O
         output_folder = args.output_folder if args.output_folder.endswith('/') or not args.output_folder else args.output_folder + '/'
