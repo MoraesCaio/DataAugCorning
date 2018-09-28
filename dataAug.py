@@ -36,7 +36,7 @@ def is_valid_resize_ratio(img_mtx, ratio=1.,
 
 
 def get_valid_resize_ratio(img_mtx, sat_tolerance=0,
-                           start=.2, stop=.01, step=-.005,
+                           start=.5, stop=.01, step=-.005,
                            verbose=0, show=False):
 
     for resize_ratio in np.arange(start, stop, step):
@@ -151,14 +151,10 @@ def crop_margins(img_mtx, top_margin, bottom_margin, left_margin, right_margin):
 
     # print('height: ' + str(img_mtx.shape[0]) +
     #       '\nwidth: ' + str(img_mtx.shape[1]))
-    
+
     top    = int(img_mtx.shape[0] * top_margin)
     bottom = int(img_mtx.shape[0] - img_mtx.shape[0] * bottom_margin)
     left   = int(img_mtx.shape[1] * left_margin)
     right  = int(img_mtx.shape[1] - img_mtx.shape[1] * right_margin)
 
-    # img_mtx[top:bottom, left:right].view(ImageMatrix).get_image().show()
-    # img_mtx[450:1600, 1300:2900].view(ImageMatrix).get_image().show()
-    cropped = img_mtx[top:bottom, left:right].view(ImageMatrix)
-    cropped.save('0margins.jpg', 'JPEG')
-    return cropped
+    return img_mtx[top:bottom, left:right].view(ImageMatrix)
