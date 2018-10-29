@@ -36,7 +36,7 @@ def is_valid_resize_ratio(img_mtx, ratio=1.,
 
 
 def get_valid_resize_ratio(img_mtx, sat_tolerance=0,
-                           start=.5, stop=.01, step=-.005,
+                           start=.3, stop=.01, step=-.005,
                            verbose=0, show=False):
 
     for resize_ratio in np.arange(start, stop, step):
